@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Microsoft.ML.Tokenizers
 
 <PageTitle>Home</PageTitle>
 
@@ -7,20 +8,22 @@
 
 @* Display the tokenized string with colors *@
 <div>
-    @inputText
+    <Visualizer Tokens="@Tokens" />
 </div>
 
 @code {
-    string inputText = string.Empty;   
+    string inputText = string.Empty;
+    Tokenizer tokenizer = default!;
+    IReadOnlyList<EncodedToken> Tokens { get; set; } = [];
 
     private void OnGetText(string value)
     {
-        inputText = value;
+        Tokens = tokenizer.EncodeToTokens(value, out _);
     }
 
     protected override void OnInitialized()
     {
         // Initialize the tokenizer for the `gpt-4o` model. This instance should be cached for all subsequent use.
+        tokenizer = TiktokenTokenizer.CreateForModel("gpt-4o");
     }
-
 }
